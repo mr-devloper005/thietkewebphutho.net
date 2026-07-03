@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { MessageSquare, Search } from 'lucide-react'
+import { MessageSquare, Search, Heart, ShieldCheck, Sparkles, Users, Flame, TrendingUp } from 'lucide-react'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 
 type StoredComment = {
@@ -17,6 +17,21 @@ type StoredComment = {
 
 const COMMENTS_PER_PAGE = 8
 const COMMENT_KEY_PREFIX = 'slot4:article-comments:'
+
+const guidelines = [
+  { icon: Heart, title: 'Be kind', body: 'Fair criticism is welcome; personal attacks are not. Assume the person on the other side is a neighbor.' },
+  { icon: ShieldCheck, title: 'Stay honest', body: 'Share your first-hand experience. No paid endorsements, no astroturfing, no impersonation.' },
+  { icon: Sparkles, title: 'Add something', body: 'The best threads sharpen a guide, correct a fact, or point to a spot the writer missed.' },
+]
+
+const featuredMembers = [
+  { name: 'Ravi Kumar', role: 'Cafe hopper', initials: 'RK' },
+  { name: 'Meera Das', role: 'Bookshop crawler', initials: 'MD' },
+  { name: 'Josh Alvarez', role: 'Live music tipster', initials: 'JA' },
+  { name: 'Nina Ito', role: 'Farmers market regular', initials: 'NI' },
+  { name: 'Sana Patel', role: 'Weekend walker', initials: 'SP' },
+  { name: 'Ben Ochieng', role: 'Coffee obsessive', initials: 'BO' },
+]
 
 const formatDate = (value: string) => {
   try {
@@ -81,6 +96,9 @@ export default function CommentsPage() {
     })
   }, [comments, query])
 
+  const uniqueThreads = useMemo(() => new Set(comments.map((c) => c.articleSlug).filter(Boolean)).size, [comments])
+  const uniqueAuthors = useMemo(() => new Set(comments.map((c) => c.name)).size, [comments])
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / COMMENTS_PER_PAGE))
   const currentPage = Math.min(page, totalPages)
   const visibleComments = filtered.slice((currentPage - 1) * COMMENTS_PER_PAGE, currentPage * COMMENTS_PER_PAGE)
@@ -97,17 +115,80 @@ export default function CommentsPage() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                <MessageSquare className="h-4 w-4" /> Local comments
+                <MessageSquare className="h-4 w-4" /> Community threads
               </p>
-              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">Comments</h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
-                Review comments saved in this browser from article pages.
+              <h1 className="mt-4 text-4xl font-extrabold tracking-[-0.03em] sm:text-6xl">Comments and conversations</h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
+                The living room of the site. This is where readers correct a fact, thank an owner, argue about the best bakery on a street, and quietly make every guide sharper.
               </p>
             </div>
             <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 text-sm font-black" onClick={refreshComments}>Refresh comments</button>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-[var(--editable-border)] bg-[var(--slot4-panel-bg)] p-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Total comments</div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-3xl font-extrabold text-[var(--slot4-accent)]">{comments.length}</span>
+                <TrendingUp className="h-4 w-4 text-[var(--slot4-accent)]" />
+              </div>
+            </div>
+            <div className="rounded-2xl border border-[var(--editable-border)] bg-[var(--slot4-panel-bg)] p-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Threads active</div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-3xl font-extrabold text-[var(--slot4-accent)]">{uniqueThreads}</span>
+                <Flame className="h-4 w-4 text-[var(--slot4-accent)]" />
+              </div>
+            </div>
+            <div className="rounded-2xl border border-[var(--editable-border)] bg-[var(--slot4-panel-bg)] p-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Voices in the room</div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-3xl font-extrabold text-[var(--slot4-accent)]">{uniqueAuthors}</span>
+                <Users className="h-4 w-4 text-[var(--slot4-accent)]" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-[2rem] border border-[var(--slot4-accent)]/40 bg-[var(--slot4-accent-soft)] p-6 sm:p-8">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="mt-1 h-5 w-5 shrink-0 text-[var(--slot4-accent)]" />
+            <div>
+              <h2 className="text-lg font-bold">Community guidelines</h2>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Three rules keep this space useful. Read them before joining a thread.</p>
+            </div>
+          </div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            {guidelines.map((rule) => (
+              <div key={rule.title} className="rounded-2xl border border-[var(--editable-border)] bg-white p-5">
+                <rule.icon className="h-5 w-5 text-[var(--slot4-accent)]" />
+                <h3 className="mt-3 text-sm font-bold">{rule.title}</h3>
+                <p className="mt-2 text-xs leading-6 text-muted-foreground">{rule.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-[2rem] border border-border bg-card p-6 sm:p-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold">Recent commenters</h2>
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">This week</span>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-4">
+            {featuredMembers.map((member) => (
+              <div key={member.name} className="flex items-center gap-3 rounded-full border border-[var(--editable-border)] bg-white py-2 pl-2 pr-4">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--slot4-accent-soft)] text-xs font-extrabold text-[var(--slot4-accent)]">{member.initials}</span>
+                <div className="text-xs">
+                  <div className="font-bold">{member.name}</div>
+                  <div className="text-muted-foreground">{member.role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-[2rem] border border-border bg-card p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:max-w-md">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -131,9 +212,12 @@ export default function CommentsPage() {
             {visibleComments.map((item) => (
               <article key={`${item.articleSlug}-${item.id}`} className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="font-semibold text-foreground">{item.name}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{formatDate(item.createdAt)}</p>
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--slot4-accent-soft)] text-sm font-extrabold text-[var(--slot4-accent)]">{item.name.slice(0, 1).toUpperCase()}</span>
+                    <div>
+                      <p className="font-semibold text-foreground">{item.name}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{formatDate(item.createdAt)}</p>
+                    </div>
                   </div>
                   {item.articleSlug ? (
                     <Link href={`/article/${item.articleSlug}`} className="text-sm text-primary underline-offset-4 hover:underline">
@@ -148,8 +232,10 @@ export default function CommentsPage() {
           </section>
         ) : (
           <section className="mt-8 rounded-2xl border border-dashed border-border bg-card/70 p-8 text-center">
-            <h2 className="text-xl font-semibold text-foreground">No comments yet</h2>
+            <MessageSquare className="mx-auto h-8 w-8 text-muted-foreground" />
+            <h2 className="mt-3 text-xl font-semibold text-foreground">The room is quiet</h2>
             <p className="mt-2 text-sm text-muted-foreground">Add a comment on any article page and it will appear here.</p>
+            <Link href="/article" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--slot4-accent-fill)] px-5 py-2 text-sm font-bold text-[var(--slot4-on-accent)]">Browse articles</Link>
           </section>
         )}
 
