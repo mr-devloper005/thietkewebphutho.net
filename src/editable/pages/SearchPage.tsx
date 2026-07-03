@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Filter, Search } from 'lucide-react'
+import { ArrowRight, Filter, Search, TrendingUp, Sparkles, Tag, Lightbulb, Gift, Compass, Flame } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { fetchSiteFeed } from '@/lib/site-connector'
 import { getPostTaskKey } from '@/lib/task-data'
@@ -9,6 +9,8 @@ import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { pagesContent } from '@/editable/content/pages.content'
+import { formatRichHtml } from '@/components/shared/rich-content'
+import { Ads } from '@/lib/ads'
 
 export const revalidate = 3
 
@@ -19,6 +21,15 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pagesContent.search.metadata.description,
   })
 }
+
+const popularSearches = ['weekend brunch', 'kids-friendly cafes', 'independent bookshops', 'live jazz venues', 'walking tours', 'artisan bakeries', 'thrift and vintage', 'craft breweries']
+const categoryChips = ['Food and drink', 'Shopping', 'Arts and culture', 'Wellness', 'Outdoors', 'Services', 'Nightlife', 'Family']
+const searchTips = [
+  'Combine a category with a neighborhood, like "coffee koramangala".',
+  'Add a season or day, like "sunday market" or "monsoon indoor".',
+  'Use plain English. Our search understands intent, not just keywords.',
+  'Filter by content type to focus on guides, listings, or classifieds.',
+]
 
 const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ')
 const compactText = (value: unknown) => typeof value === 'string' ? stripHtml(value).replace(/\s+/g, ' ').trim().toLowerCase() : ''
@@ -48,8 +59,6 @@ const matches = (post: SitePost, query: string, category: string, task: string) 
 
 function SearchResultCard({ post, index }: { post: SitePost; index: number }) {
   const task = getPostTaskKey(post) as TaskKey | null
-  // Route from the task config (e.g. /listing/<slug>); buildPostUrl can fall
-  // back to /posts for tasks missing from the enabled taskViews map, which 404s.
   const taskRoute = SITE_CONFIG.tasks.find((item) => item.key === task)?.route
   const href = `${taskRoute || `/${task || 'article'}`}/${post.slug}`
   const image = getImage(post)
@@ -69,7 +78,7 @@ function SearchResultCard({ post, index }: { post: SitePost; index: number }) {
       <div className="p-5 sm:p-6">
         {!image ? <span className="rounded-full bg-[var(--editable-page-text,#211713)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">{taskLabel}</span> : null}
         <h2 className="mt-4 line-clamp-3 text-2xl font-black leading-[0.95] tracking-[-0.06em] text-[var(--editable-page-text,#211713)]">{post.title}</h2>
-        {summary ? <p className="mt-4 line-clamp-3 text-sm font-semibold leading-7 text-[var(--editable-page-text,#211713)]/65">{summary}</p> : null}
+        {summary ? <div className="mt-2 line-clamp-2 flex-1 text-sm leading-6 text-[var(--slot4-muted-text)]" dangerouslySetInnerHTML={{ __html: formatRichHtml(summary) }} /> : null}
         <span className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-60 group-hover:opacity-100">Open result <ArrowRight className="h-4 w-4" /></span>
       </div>
     </Link>
@@ -86,6 +95,7 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
   const feed = await fetchSiteFeed(useMaster ? 1000 : 300, useMaster ? { fresh: true, category: category || undefined, task: task || undefined } : undefined)
   const posts = feed?.posts?.length ? feed.posts : useMaster ? [] : SITE_CONFIG.tasks.filter((item) => item.enabled).flatMap((item) => getMockPostsForTask(item.key))
   const results = posts.filter((post) => matches(post, normalized, category, task)).slice(0, normalized ? 80 : 36)
+  const relatedStrip = results.slice(0, 6)
   const enabledTasks = SITE_CONFIG.tasks.filter((item) => item.enabled)
 
   return (
@@ -118,24 +128,100 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
             </form>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.24em] opacity-50">{results.length} results</p>
-              <h2 className="mt-2 text-3xl font-black tracking-[-0.06em]">{query ? `Results for “${query}”` : pagesContent.search.resultsTitle}</h2>
-            </div>
-            <Link href="/article" className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Browse latest <ArrowRight className="h-4 w-4" /></Link>
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-black uppercase tracking-[0.18em] opacity-55"><Tag className="mr-1 inline h-3 w-3" /> Browse by category</span>
+            {categoryChips.map((chip) => (
+              <Link key={chip} href={`/search?category=${encodeURIComponent(chip.toLowerCase())}`} className="rounded-full border border-[var(--editable-border)] bg-white px-3 py-1 text-xs font-black hover:-translate-y-0.5 transition">{chip}</Link>
+            ))}
           </div>
 
-          {results.length ? (
-            <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {results.map((post, index) => <SearchResultCard key={post.id || post.slug} post={post} index={index} />)}
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_18rem]">
+            <div>
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.24em] opacity-50">{results.length} results</p>
+                  <h2 className="mt-2 text-3xl font-black tracking-[-0.06em]">{query ? `Results for "${query}"` : pagesContent.search.resultsTitle}</h2>
+                </div>
+                <Link href="/article" className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Browse latest <ArrowRight className="h-4 w-4" /></Link>
+              </div>
+
+              {results.length ? (
+                <div className="mt-6 grid gap-5 md:grid-cols-2">
+                  {results.map((post, index) => <SearchResultCard key={post.id || post.slug} post={post} index={index} />)}
+                </div>
+              ) : (
+                <div className="mt-8 rounded-[2rem] border border-dashed border-[var(--editable-border)] bg-white/70 p-10 text-center">
+                  <p className="text-2xl font-black tracking-[-0.04em]">No matching posts found.</p>
+                  <p className="mt-3 text-sm font-semibold opacity-60">Try a different keyword, task type, or category.</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="mt-8 rounded-[2rem] border border-dashed border-[var(--editable-border)] bg-white/70 p-10 text-center">
-              <p className="text-2xl font-black tracking-[-0.04em]">No matching posts found.</p>
-              <p className="mt-3 text-sm font-semibold opacity-60">Try a different keyword, task type, or category.</p>
+
+            <aside className="space-y-5">
+              <div className="rounded-3xl border border-[var(--editable-border)] bg-white p-5">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-55"><TrendingUp className="h-4 w-4" /> Popular searches</div>
+                <ul className="mt-4 space-y-2">
+                  {popularSearches.map((term) => (
+                    <li key={term}>
+                      <Link href={`/search?q=${encodeURIComponent(term)}`} className="flex items-center justify-between gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold hover:border-[var(--editable-border)] hover:bg-[var(--editable-page-bg,#fff7ee)]">
+                        <span>{term}</span>
+                        <Flame className="h-3 w-3 opacity-50" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-3xl border border-[var(--editable-border)] bg-white p-5">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-55"><Lightbulb className="h-4 w-4" /> Search tips</div>
+                <ul className="mt-4 space-y-3">
+                  {searchTips.map((tip) => (
+                    <li key={tip} className="flex gap-2 text-xs font-semibold leading-6 opacity-80">
+                      <Sparkles className="mt-0.5 h-3 w-3 shrink-0 opacity-60" />
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-3xl border border-[var(--editable-border)] bg-white p-4">
+                <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-55"><Gift className="h-4 w-4" /> Sponsored</div>
+                <Ads slot="sidebar" showLabel={false} className="mx-auto w-full" />
+              </div>
+            </aside>
+          </div>
+
+          {relatedStrip.length ? (
+            <div className="mt-16">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.24em] opacity-55"><Compass className="mr-1 inline h-4 w-4" /> Also worth a look</p>
+                  <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-3xl">Related picks from the feed.</h2>
+                </div>
+                <Link href="/article" className="inline-flex items-center gap-2 text-sm font-black opacity-70 hover:opacity-100">See all <ArrowRight className="h-4 w-4" /></Link>
+              </div>
+              <div className="mt-6 flex snap-x gap-4 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {relatedStrip.map((post) => {
+                  const task = getPostTaskKey(post) as TaskKey | null
+                  const taskRoute = SITE_CONFIG.tasks.find((item) => item.key === task)?.route
+                  const href = `${taskRoute || `/${task || 'article'}`}/${post.slug}`
+                  const image = getImage(post)
+                  return (
+                    <Link key={`related-${post.id || post.slug}`} href={href} className="group w-[260px] shrink-0 snap-start overflow-hidden rounded-2xl border border-[var(--editable-border)] bg-white sm:w-[300px]">
+                      {image ? (
+                        <div className="aspect-[16/10] overflow-hidden bg-black">
+                          <img src={image} alt="" className="h-full w-full object-cover opacity-90 transition group-hover:scale-105" />
+                        </div>
+                      ) : null}
+                      <div className="p-4">
+                        <h3 className="line-clamp-2 text-base font-black leading-tight tracking-[-0.02em]">{post.title}</h3>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
             </div>
-          )}
+          ) : null}
         </section>
       </main>
     </EditableSiteShell>

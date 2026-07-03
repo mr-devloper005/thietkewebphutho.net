@@ -2,7 +2,7 @@
 
 import { FormEvent, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, FileText, ImageIcon, Lock, PlusCircle, Send, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle2, ClipboardList, FileText, ImageIcon, Lock, PlusCircle, Rocket, Send, Shield, Sparkles, Upload, Eye, Award, HelpCircle } from 'lucide-react'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
@@ -33,6 +33,34 @@ const taskIcon: Record<string, typeof FileText> = {
 }
 
 const fieldClass = 'rounded-2xl border border-[var(--editable-border)] bg-white px-4 py-3 text-sm font-bold text-[var(--editable-page-text,#2f1d16)] outline-none transition placeholder:text-current/35 focus:border-current'
+
+const steps = [
+  { icon: Upload, title: 'Draft it', body: 'Pick a content type, drop your title, summary, and body. Attach a hero image or a link if you have one.' },
+  { icon: Eye, title: 'We review it', body: 'A human editor checks accuracy, category fit, and formatting. Most posts clear review inside a day.' },
+  { icon: Rocket, title: 'It goes live', body: 'Your post lands on the homepage feed, category pages, and every relevant guide. You keep full edit access.' },
+]
+
+const benefits = [
+  { icon: Award, title: 'Byline and profile', body: 'Every published post carries your name and a link back to a profile you control.' },
+  { icon: Shield, title: 'Editorial protection', body: 'We defend fair criticism, protect sources, and never sell your contact details.' },
+  { icon: Sparkles, title: 'Amplified reach', body: 'Featured picks land in the weekly digest read by tens of thousands of locals.' },
+  { icon: ClipboardList, title: 'Simple tools', body: 'Save drafts, schedule updates, and revise anytime without waiting for support.' },
+]
+
+const guidelines = [
+  'Write like a person who has actually been there. First-hand detail beats a press release every time.',
+  'Include practical facts: hours, price range, neighborhood, and the closest transit stop.',
+  'Attribute quotes and photos, and skip anything you did not shoot or write yourself.',
+  'No affiliate links, no paid placements, no astroturfing. We spot it and we take it down.',
+  'Keep it kind. Fair criticism is welcome; personal attacks are not.',
+]
+
+const faqs = [
+  { q: 'Who can submit a post?', a: 'Any signed-in member can draft and submit. Featured contributors get a badge after three published posts.' },
+  { q: 'How long is review?', a: 'The median review is under 24 hours on weekdays. We message you if anything needs clarifying.' },
+  { q: 'Can I edit after publishing?', a: 'Yes. You keep full edit access forever. Major changes trigger a light re-review.' },
+  { q: 'Do you pay contributors?', a: 'Regular columns and commissioned features are paid on our standard rate card. One-offs earn a free membership tier.' },
+]
 
 const saveDraft = (draft: DraftPost) => {
   try {
@@ -107,13 +135,37 @@ export default function CreatePage() {
   return (
     <EditableSiteShell>
       <main className="min-h-screen bg-[var(--editable-page-bg,#fff7ee)] text-[var(--editable-page-text,#2f1d16)]">
-        <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+        <section className="mx-auto max-w-[var(--editable-container)] px-4 pt-10 sm:px-6 lg:px-8 lg:pt-16">
+          <div className="rounded-[2.8rem] border border-[var(--editable-border)] bg-white/75 p-7 shadow-[0_30px_90px_rgba(15,23,42,0.08)] sm:p-10">
+            <p className="text-xs font-black uppercase tracking-[0.28em] opacity-55">{pagesContent.create.hero.badge}</p>
+            <h1 className="mt-4 max-w-3xl text-5xl font-black leading-[0.92] tracking-[-0.06em] sm:text-6xl">{pagesContent.create.hero.title}</h1>
+            <p className="mt-5 max-w-2xl text-base font-semibold leading-8 opacity-70">{pagesContent.create.hero.description}</p>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[var(--editable-container)] px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-xs font-black uppercase tracking-[0.24em] opacity-55">How submissions work</p>
+          <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">Three steps to published.</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <div key={step.title} className="rounded-3xl border border-[var(--editable-border)] bg-white p-6">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--editable-page-text,#2f1d16)] text-white text-sm font-black">{index + 1}</span>
+                  <step.icon className="h-5 w-5 opacity-60" />
+                </div>
+                <h3 className="mt-4 text-xl font-black tracking-[-0.03em]">{step.title}</h3>
+                <p className="mt-2 text-sm font-semibold leading-7 opacity-70">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[var(--editable-container)] px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 rounded-[2.8rem] border border-[var(--editable-border)] bg-white/75 p-6 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur lg:grid-cols-[0.85fr_1.15fr] lg:p-10">
             <aside>
-              <p className="text-xs font-black uppercase tracking-[0.28em] opacity-55">{pagesContent.create.hero.badge}</p>
-              <h1 className="mt-5 text-5xl font-black leading-[0.92] tracking-[-0.08em] sm:text-7xl">{pagesContent.create.hero.title}</h1>
-              <p className="mt-6 max-w-xl text-base font-semibold leading-8 opacity-70">{pagesContent.create.hero.description}</p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <p className="text-xs font-black uppercase tracking-[0.28em] opacity-55">Pick a format</p>
+              <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">What are you publishing?</h2>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {enabledTasks.map((item) => {
                   const Icon = taskIcon[item.key] || FileText
                   const active = item.key === task
@@ -159,6 +211,52 @@ export default function CreatePage() {
                 <Send className="h-4 w-4" /> {pagesContent.create.submitLabel}
               </button>
             </form>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[var(--editable-container)] px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-xs font-black uppercase tracking-[0.24em] opacity-55">Why publish here</p>
+          <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">Benefits contributors keep coming back for.</h2>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {benefits.map((benefit) => (
+              <div key={benefit.title} className="rounded-3xl border border-[var(--editable-border)] bg-white p-6">
+                <benefit.icon className="h-6 w-6 text-[var(--editable-page-text,#2f1d16)]" />
+                <h3 className="mt-4 text-lg font-black tracking-[-0.02em]">{benefit.title}</h3>
+                <p className="mt-2 text-sm font-semibold leading-7 opacity-70">{benefit.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[var(--editable-container)] px-4 pb-14 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+            <div className="rounded-3xl border border-[var(--editable-border)] bg-white p-8">
+              <p className="text-xs font-black uppercase tracking-[0.24em] opacity-55">Editorial guidelines</p>
+              <h2 className="mt-3 text-2xl font-black tracking-[-0.03em]">The short version.</h2>
+              <ul className="mt-6 space-y-3">
+                {guidelines.map((rule) => (
+                  <li key={rule} className="flex items-start gap-3 text-sm font-semibold leading-7">
+                    <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-3xl border border-[var(--editable-border)] bg-white p-8">
+              <p className="text-xs font-black uppercase tracking-[0.24em] opacity-55"><HelpCircle className="mr-1 inline h-4 w-4" /> Questions</p>
+              <h2 className="mt-3 text-2xl font-black tracking-[-0.03em]">Frequently asked.</h2>
+              <div className="mt-4 divide-y divide-[var(--editable-border)]">
+                {faqs.map((faq) => (
+                  <details key={faq.q} className="group py-4 [&_summary::-webkit-details-marker]:hidden">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-black">
+                      {faq.q}
+                      <span className="text-lg leading-none transition group-open:rotate-45">+</span>
+                    </summary>
+                    <p className="mt-3 text-sm font-semibold leading-7 opacity-70">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       </main>
