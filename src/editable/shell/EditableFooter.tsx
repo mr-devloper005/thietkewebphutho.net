@@ -3,20 +3,9 @@
 import Link from 'next/link'
 import {
   ArrowRight,
-  Award,
-  Facebook,
-  Github,
   Globe,
-  Instagram,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
   Send,
-  ShieldCheck,
   Sparkles,
-  Twitter,
-  Youtube,
 } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { taskThemes } from '@/editable/theme/task-themes'

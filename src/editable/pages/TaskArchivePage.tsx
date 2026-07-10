@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, BadgeCheck, Bookmark, BriefcaseBusiness, Calendar, ChevronDown, ChevronRight, Clock, Compass, Download, FileText, Filter, Globe, Home, Lightbulb, Mail, MapPin, Phone, Search, Sparkles, Star, Tag, TrendingUp, UserRound, Users } from 'lucide-react'
+import { ArrowUpRight, BadgeCheck, Bookmark, BriefcaseBusiness, Calendar, ChevronDown, ChevronRight, Clock, Download, FileText, Filter, Globe, Home, Lightbulb, Mail, MapPin, Phone, Search, Sparkles, Star, Tag, TrendingUp, UserRound, Users } from 'lucide-react'
 import { buildTaskMetadata } from '@/lib/seo'
 import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 import { fetchPaginatedTaskPosts, buildPostUrl } from '@/lib/task-data'
@@ -121,50 +121,6 @@ const faqBank: Partial<Record<TaskKey, { q: string; a: string }[]>> = {
   ],
 }
 
-const relatedTiles: Partial<Record<TaskKey, { title: string; body: string; icon: 'compass' | 'sparkles' | 'trending' }[]>> = {
-  article: [
-    { title: 'Editor picks', body: 'Deep dives our editors keep on their desk.', icon: 'sparkles' },
-    { title: 'Long-form series', body: 'Multi-part explorations worth bookmarking.', icon: 'compass' },
-    { title: 'Trending this week', body: 'What readers are opening most right now.', icon: 'trending' },
-  ],
-  listing: [
-    { title: 'Verified partners', body: 'Businesses our team has hand-verified.', icon: 'sparkles' },
-    { title: 'By neighbourhood', body: 'Browse local pockets across the city.', icon: 'compass' },
-    { title: 'Rising listings', body: 'Newcomers gaining traction with visitors.', icon: 'trending' },
-  ],
-  classified: [
-    { title: 'Deal of the day', body: 'One handpicked bargain, every morning.', icon: 'sparkles' },
-    { title: 'By region', body: 'Filter by neighbourhood before you scroll.', icon: 'compass' },
-    { title: 'Hot right now', body: 'The ads getting the most inquiries today.', icon: 'trending' },
-  ],
-  image: [
-    { title: 'Featured shoots', body: 'Series curated for wall-worthy visuals.', icon: 'sparkles' },
-    { title: 'By palette', body: 'Explore images by dominant colour mood.', icon: 'compass' },
-    { title: 'Downloaded most', body: 'The visuals other creators reach for.', icon: 'trending' },
-  ],
-  sbm: [
-    { title: 'Staff bookmarks', body: 'Where our team goes when they need a link.', icon: 'sparkles' },
-    { title: 'By discipline', body: 'Reference lists for every craft.', icon: 'compass' },
-    { title: 'Rising links', body: 'Freshly saved and climbing the charts.', icon: 'trending' },
-  ],
-  pdf: [
-    { title: 'Curated packs', body: 'Bundles our editors read cover to cover.', icon: 'sparkles' },
-    { title: 'By topic', body: 'Every category, sorted for quick discovery.', icon: 'compass' },
-    { title: 'Downloaded most', body: 'The documents readers keep coming back to.', icon: 'trending' },
-  ],
-  profile: [
-    { title: 'Featured members', body: 'Voices worth following across the network.', icon: 'sparkles' },
-    { title: 'By expertise', body: 'Filter by craft, tool, or field of focus.', icon: 'compass' },
-    { title: 'Just joined', body: 'The newest members opening their profile.', icon: 'trending' },
-  ],
-}
-
-const relatedIconMap = {
-  compass: Compass,
-  sparkles: Sparkles,
-  trending: TrendingUp,
-}
-
 const featureStrip: { title: string; body: string; icon: 'badge' | 'lightbulb' | 'users' }[] = [
   { title: 'Hand-curated', body: 'Every entry is reviewed before it appears.', icon: 'badge' },
   { title: 'Always current', body: 'The archive refreshes automatically for you.', icon: 'lightbulb' },
@@ -205,7 +161,6 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
   const popular = CATEGORY_OPTIONS.slice(0, 10)
   const pageNumbers = buildPageNumbers(page, totalPages)
   const faqs = faqBank[task] || faqBank.article!
-  const related = relatedTiles[task] || relatedTiles.article!
 
   return (
     <EditableSiteShell>
@@ -700,7 +655,6 @@ function BookmarkArchiveCard({ post, href, index }: { post: SitePost; href: stri
 
 function PdfArchiveCard({ post, href }: { post: SitePost; href: string }) {
   const category = getCategory(post, 'Document')
-  const pages = getField(post, ['pages', 'pageCount']) || `${8 + (hashStr(post.slug || 'p') % 60)} pages`
   const size = getField(post, ['size', 'fileSize']) || `${(0.4 + (hashStr(post.slug || 's') % 40) / 10).toFixed(1)} MB`
   const date = dateOf(post)
   return (

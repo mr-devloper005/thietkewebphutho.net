@@ -5,23 +5,18 @@ import {
   BookOpen,
   Building2,
   CheckCircle2,
-  Clock,
   Compass,
   FileText,
   Flame,
   Globe2,
-  Heart,
   Layers,
-  MapPin,
   Newspaper,
-  Quote,
   Search,
   ShieldCheck,
   Sparkles,
   Star,
   TrendingUp,
   Users,
-  Zap,
 } from 'lucide-react'
 import type { SitePost } from '@/lib/site-connector'
 import type { HomeTimeSection } from '@/lib/task-data'
@@ -30,7 +25,6 @@ import { SITE_CONFIG } from '@/lib/site-config'
 import {
   EditorialFeatureCard,
   RailPostCard,
-  CompactIndexCard,
   getEditablePostImage,
   postHref,
 } from '@/editable/cards/PostCards'
@@ -817,33 +811,7 @@ export function EditableTimeCollections({ primaryTask, primaryRoute, posts, time
 /* ------------------------------------------------------------------ */
 
 export function EditableTestimonials(_: HomeSectionProps) {
-  const testimonials = [
-    {
-      quote:
-        'I moved to Da Nang last year and this was the first site I actually trusted for real local info. The guides are short, honest and up to date.',
-      name: 'Huyen L.',
-      role: 'Reader · Da Nang',
-      rating: 5,
-    },
-    {
-      quote:
-        'The mix of listings and reports is exactly what we needed. My team uses it every week to shortlist suppliers before we book a site visit.',
-      name: 'Duc M.',
-      role: 'Operations · Ha Noi',
-      rating: 5,
-    },
-    {
-      quote:
-        'Finally a platform that respects your time. No pop-ups, no fluff — just clear entries with useful references at the bottom.',
-      name: 'Trang V.',
-      role: 'Freelance journalist',
-      rating: 5,
-    },
-  ]
-  return (
-    null
-    
-  )
+  return null
 }
 
 /* ------------------------------------------------------------------ */
