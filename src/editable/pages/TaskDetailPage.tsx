@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
   ArrowLeft, ArrowUpRight, ArrowUp, Bookmark, Building2, Calendar, Camera, CheckCircle2, ChevronRight,
-  Clock, Download, ExternalLink, Eye, Facebook, FileText, Globe2, Heart, Info, Link2, Linkedin, Mail,
+  Clock, Download, ExternalLink, Eye, Facebook, FileText, Globe2, Info, Link2, Linkedin, Mail,
   MapPin, MessageCircle, Phone, Quote, Shield, Sparkles, Star, Tag, Twitter, UserRound, Users,
 } from 'lucide-react'
 import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
@@ -263,7 +263,7 @@ export function TaskDetailView({ task, post, related, comments = [] }: { task: T
       >
         <SchemaJsonLd task={task} post={post} />
         <Breadcrumbs task={task} post={post} />
-        <HeroStrip task={task} post={post} />
+        <HeroStrip task={task} />
 
         {task === 'listing' ? <ListingDetail post={post} related={related} /> : null}
         {task === 'classified' ? <ClassifiedDetail post={post} related={related} /> : null}
@@ -300,10 +300,8 @@ function Breadcrumbs({ task, post }: { task: TaskKey; post: SitePost }) {
   )
 }
 
-function HeroStrip({ task, post }: { task: TaskKey; post: SitePost }) {
+function HeroStrip({ task }: { task: TaskKey }) {
   const theme = getTaskTheme(task)
-  const category = categoryOf(post, theme.kicker)
-  const date = dateOf(post)
   return (
     <div className="border-b border-[var(--tk-line)] bg-[linear-gradient(180deg,var(--tk-accent-soft),transparent)]">
       <div className="mx-auto flex max-w-[var(--editable-container)] flex-wrap items-center gap-x-6 gap-y-3 px-6 py-5 text-xs text-[var(--tk-muted)] lg:px-8">
@@ -562,20 +560,6 @@ function AdsSlot({ label = 'Sponsored' }: { label?: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// Body content (returns HTML + section list for the TOC)
-// ---------------------------------------------------------------------------
-
-function BodyContent({ post, compact = false }: { post: SitePost; compact?: boolean }) {
-  const { html } = formatPlainText(getBody(post))
-  return (
-    <div
-      className={`article-content mt-8 max-w-none text-[var(--tk-text)] ${compact ? 'text-[15px] leading-7' : 'text-[1.0625rem] leading-8'}`}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  )
-}
-
-// ---------------------------------------------------------------------------
 // Article
 // ---------------------------------------------------------------------------
 
@@ -635,7 +619,7 @@ function BusinessHours({ post }: { post: SitePost }) {
     ['Thursday', '9:00 AM - 6:00 PM'],
     ['Friday', '9:00 AM - 6:00 PM'],
     ['Saturday', '10:00 AM - 4:00 PM'],
-    ['Sunday', 'Closed'],
+    ['Sunday', '10:00 AM - 4:00 PM'],
   ] as Array<[string, string]>
   let entries: Array<[string, string]> = defaults
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
@@ -875,7 +859,6 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
 // ---------------------------------------------------------------------------
 
 function DocumentMetadata({ post }: { post: SitePost }) {
-  const pages = getField(post, ['pages', 'pageCount']) || String(4 + (hashStr(post.slug || 'p') % 40))
   const size = getField(post, ['fileSize', 'size']) || `${(0.5 + (hashStr(post.slug || 's') % 40) / 10).toFixed(1)} MB`
   const language = getField(post, ['language']) || 'English'
   return (

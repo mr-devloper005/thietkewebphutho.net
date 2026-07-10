@@ -1,6 +1,6 @@
 'use client'
 
-import { Building2, Clock, FileText, Image as ImageIcon, Mail, MapPin, MessageSquare, Phone, Sparkles, Bookmark, Twitter, Instagram, Linkedin, HelpCircle } from 'lucide-react'
+import { Building2, FileText, Image as ImageIcon, Mail, MapPin, Phone, Sparkles, Bookmark, HelpCircle } from 'lucide-react'
 import { pagesContent } from '@/editable/content/pages.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { getProductKind } from '@/design/factory/get-product-kind'
@@ -42,19 +42,6 @@ function getLanes(kind: ReturnType<typeof getProductKind>) {
     { icon: Sparkles, title: 'Curator support', body: 'Need help organizing shelves, collections, or profile-connected boards?' },
   ]
 }
-
-const channels = [
-  { icon: Mail, title: 'Email', value: 'hello@thietkewebphutho.net', body: 'General enquiries answered within one business day by a human editor.' },
-  { icon: Phone, title: 'Phone', value: '+91 80 4820 1900', body: 'Weekdays, 10:00 to 18:00 IST. Voicemail is transcribed and returned same day.' },
-  { icon: MessageSquare, title: 'Live chat', value: 'In-app widget', body: 'Signed-in members can start a chat from any page. Median first reply: eight minutes.' },
-  { icon: MapPin, title: 'Office', value: 'Level 3, 214 Church Street', body: 'Drop in Wednesdays for open office hours or to pick up a stack of print guides.' },
-]
-
-const offices = [
-  { city: 'Bengaluru', address: 'Level 3, 214 Church Street, 560001', hours: 'Mon to Fri, 10:00 to 18:00 IST' },
-  { city: 'Chennai', address: 'Unit 7, Alwarpet Studios, 600018', hours: 'Tue and Thu, 11:00 to 17:00 IST' },
-  { city: 'Kochi', address: '3rd Floor, Cabral Yard, Fort Kochi, 682001', hours: 'By appointment' },
-]
 
 const faqs = [
   { q: 'How long until I get a reply?', a: 'Most emails receive a reply within one business day. Partnership requests may take up to three days while we loop in the right editor.' },
