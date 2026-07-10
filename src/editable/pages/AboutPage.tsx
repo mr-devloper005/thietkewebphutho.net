@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Award, Compass, Handshake, Heart, Leaf, MapPin, Sparkles, Star, Users } from 'lucide-react'
+import { ArrowRight, Award, Compass, Handshake, Heart, Leaf, MapPin, Sparkles, Star } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { pagesContent } from '@/editable/content/pages.content'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
@@ -19,15 +19,6 @@ const timeline = [
   { year: '2023', title: 'Directory launches', body: 'We opened a free profile portal so owners could claim, update, and reply to comments themselves.' },
   { year: '2025', title: 'Editorial newsletter', body: 'A weekly dispatch tuned to your neighborhood reached fifty thousand subscribers, entirely by word of mouth.' },
   { year: '2026', title: 'Community boards', body: 'Members now curate public boards, follow makers, and coordinate meetups across thirty two cities.' },
-]
-
-const team = [
-  { name: 'Ananya Iyer', role: 'Editor-in-chief', bio: 'Former features editor; still eats lunch out four days a week.', initials: 'AI' },
-  { name: 'Marco Bellini', role: 'Head of directory', bio: 'Ran the verification desk at a national listings site for eight years.', initials: 'MB' },
-  { name: 'Priya Menon', role: 'Community lead', bio: 'Organizes the monthly maker meet-ups and answers most of the email.', initials: 'PM' },
-  { name: 'Kenji Watanabe', role: 'Design director', bio: 'Believes typography can carry an entire product; usually correct.', initials: 'KW' },
-  { name: 'Sara Novak', role: 'Head of engineering', bio: 'Keeps the site fast on a decade-old phone in a subway tunnel.', initials: 'SN' },
-  { name: 'Diego Alvarez', role: 'Partnerships', bio: 'Works with independent chambers of commerce across the region.', initials: 'DA' },
 ]
 
 const stats = [

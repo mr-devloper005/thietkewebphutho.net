@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2, ShieldCheck, Sparkles, Users, Star, UserPlus, Rocket, Heart } from 'lucide-react'
+import { CheckCircle2, ShieldCheck, Sparkles, Users, UserPlus, Rocket, Heart } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableLocalSignupForm } from '@/editable/components/EditableLocalAuthForms'
